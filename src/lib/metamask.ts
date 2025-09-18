@@ -1,5 +1,11 @@
 import { ethers } from 'ethers';
 
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 export interface MetaMaskContextType {
   isConnected: boolean;
   account: string | null;
