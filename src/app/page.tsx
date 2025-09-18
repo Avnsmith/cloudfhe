@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Wallet, Lock, Shield, FileText } from 'lucide-react';
 import FileUpload from '@/components/FileUpload';
 import { MetaMaskService } from '@/lib/metamask';
@@ -14,11 +14,7 @@ export default function Home() {
   const [encryptedFiles, setEncryptedFiles] = useState<EncryptedFile[]>([]);
   const [metaMaskService] = useState(() => new MetaMaskService());
 
-  useEffect(() => {
-    initializeMetaMask();
-  }, []);
-
-  const initializeMetaMask = async () => {
+  const initializeMetaMask = useCallback(async () => {
     try {
       await metaMaskService.initialize();
       const currentAccount = await metaMaskService.getAccount();
@@ -29,7 +25,11 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to initialize MetaMask:', error);
     }
-  };
+  }, [metaMaskService]);
+
+  useEffect(() => {
+    initializeMetaMask();
+  }, [initializeMetaMask]);
 
   const connectWallet = async () => {
     setIsLoading(true);
@@ -39,8 +39,9 @@ export default function Home() {
       const connectedAccount = await metaMaskService.connect();
       setAccount(connectedAccount);
       setIsConnected(true);
-    } catch (error: any) {
-      setError(error.message || 'Failed to connect wallet');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to connect wallet';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -81,8 +82,9 @@ export default function Home() {
       setEncryptedFiles(prev => [...prev, encryptedFile]);
       
       console.log('File encrypted and stored:', encryptedFile);
-    } catch (error: any) {
-      setError(error.message || 'Failed to encrypt file');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to encrypt file';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -127,8 +129,9 @@ export default function Home() {
       } else {
         setError('Failed to decrypt file');
       }
-    } catch (error: any) {
-      setError(error.message || 'Failed to decrypt file');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to decrypt file';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -263,7 +266,7 @@ export default function Home() {
                 FHE Encryption
               </h3>
               <p className="text-gray-600">
-                Your files are encrypted using Zama's Fully Homomorphic Encryption technology
+                Your files are encrypted using Zama&apos;s Fully Homomorphic Encryption technology
               </p>
             </div>
             <div className="text-center">

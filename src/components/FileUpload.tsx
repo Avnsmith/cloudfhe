@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, File, Lock, CheckCircle } from 'lucide-react';
+import { Upload, File, Lock } from 'lucide-react';
 
 interface FileUploadProps {
   onFileUpload: (file: File) => Promise<void>;

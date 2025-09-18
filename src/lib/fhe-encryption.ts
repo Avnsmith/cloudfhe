@@ -51,7 +51,7 @@ export class FHEEncryption {
       }
 
       // Simulate FHE decryption
-      const decryptedData = await this.simulateFHEDecryption(encryptedFile.encryptedData, signature);
+      const decryptedData = await this.simulateFHEDecryption(encryptedFile.encryptedData);
       return decryptedData.buffer.slice(0) as ArrayBuffer;
     } catch (error) {
       console.error('Decryption failed:', error);
@@ -72,7 +72,7 @@ export class FHEEncryption {
     return btoa(String.fromCharCode.apply(null, Array.from(encrypted)));
   }
 
-  private static async simulateFHEDecryption(encryptedData: string, signature: string): Promise<Uint8Array> {
+  private static async simulateFHEDecryption(encryptedData: string): Promise<Uint8Array> {
     // Simulate FHE decryption
     const encrypted = new Uint8Array(atob(encryptedData).split('').map(char => char.charCodeAt(0)));
     const decrypted = new Uint8Array(encrypted.length);
